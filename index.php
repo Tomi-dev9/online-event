@@ -13,7 +13,7 @@
     <?php include "layout/header.html"; ?>
     <!-- Hero Section -->
     <section class="hero">
-        <h1>"Solusi terbaik untuk mencatat dan mengelola kehadiran peserta acara online."</h1>
+        <h1>asndojsadbnsadna."</h1>
     </section>
 
     <!-- Event Section -->
