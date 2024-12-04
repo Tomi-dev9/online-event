@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
 
     // Prepare the SQL query
-    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
+    $stmt = $conn->prepare("SELECT * FROM admins WHERE email = ? AND password = ?");
     $stmt->bind_param("ss", $username, $password);  // "ss" means two string parameters
     $stmt->execute();
 
