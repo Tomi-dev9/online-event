@@ -1,3 +1,7 @@
+<?php include './services/services.php';
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,11 +13,103 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css">
 </head>
+<header class="header">
+    <div class="logo">SikilatAbsensi</div>
+    <nav class="navbar">
+        <a href="#">Home</a>
+        <a href="./peserta/sertifikat.php">Sertifikat</a>
+        <a class="login" href="./auth/login.php">Log In</a>
+    </nav>
+    <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+</header>
+
+<style>
+    /* Base styles */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background-color: #5BC0DE;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .navbar {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .navbar a {
+        text-decoration: none;
+        color: #333;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+    .navbar a:hover {
+        background-color: #5BC0DE;
+    }
+
+    .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #333;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .navbar {
+            flex-direction: column;
+            align-items: flex-start;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            display: none;
+            width: 100%;
+        }
+
+        .navbar a {
+            width: 100%;
+            text-align: left;
+        }
+
+        .menu-toggle {
+            display: block;
+        }
+
+        .navbar.active {
+            display: flex;
+        }
+    }
+</style>
+
+<script>
+    // JavaScript to toggle the navbar visibility
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navbar = document.querySelector('.navbar');
+
+    menuToggle.addEventListener('click', () => {
+        navbar.classList.toggle('active');
+    });
+</script>
+
 <body>
-    <?php include "layout/header.html"; ?>
     <!-- Hero Section -->
     <section class="hero">
-        <h1>asndojsadbnsadna."</h1>
+        <h1>"Solusi Absensi untuk Kegiatan Online dan Offline dengan SikilatAbsensi"</h1>
     </section>
 
     <!-- Event Section -->
