@@ -28,7 +28,7 @@ if (!isset($_SESSION['email'])) {
     <nav class="bg-blue-500 p-4 shadow-md">
         <div class="container mx-auto flex justify-between items-center">
             <h1 class="text-white text-lg font-semibold">Dashboard</h1>
-            <a href="../login.php" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg font-medium transition">Logout</a>
+            <a href="./logout.php" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg font-medium transition">Logout</a>
         </div>
     </nav>
 
@@ -36,7 +36,6 @@ if (!isset($_SESSION['email'])) {
     <div class="container mx-auto mt-10 max-w-3xl">
         <div class="bg-white shadow-lg rounded-lg p-6 text-center">
             <h2 class="text-2xl font-semibold text-gray-800 mb-4">Selamat datang, <?php echo htmlspecialchars($_SESSION['email']); ?>!</h2>
-            <p class="text-gray-600">Anda berhasil masuk ke dashboard. Di sini Anda dapat mengakses semua fitur yang tersedia.</p>
         </div>
     </div>
 
@@ -47,21 +46,21 @@ if (!isset($_SESSION['email'])) {
             <div class="bg-blue-100 shadow-md rounded-lg p-6 text-center">
                 <h3 class="text-lg font-semibold text-gray-800 mb-2">Event Anda</h3>
                 <p class="text-gray-600">Lihat dan kelola acara yang Anda buat.</p>
-                <a href="#" class="mt-4 inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-medium transition">Kelola Event</a>
+                <a href="event.php" class="mt-4 inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-medium transition">Kelola Event</a>
             </div>
 
             <!-- Card 2 -->
             <div class="bg-green-100 shadow-md rounded-lg p-6 text-center">
                 <h3 class="text-lg font-semibold text-gray-800 mb-2">Data Peserta</h3>
                 <p class="text-gray-600">Kelola daftar peserta yang sudah mendaftar.</p>
-                <a href="#" class="mt-4 inline-block bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg font-medium transition">Lihat Data</a>
+                <a href="data-peserta.php" class="mt-4 inline-block bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg font-medium transition">Lihat Data</a>
             </div>
 
             <!-- Card 3 -->
             <div class="bg-yellow-100 shadow-md rounded-lg p-6 text-center">
                 <h3 class="text-lg font-semibold text-gray-800 mb-2">Laporan Kehadiran</h3>
                 <p class="text-gray-600">Pantau kehadiran peserta secara real-time.</p>
-                <a href="#" class="mt-4 inline-block bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg font-medium transition">Lihat Laporan</a>
+                <a href="laporan.php" class="mt-4 inline-block bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg font-medium transition">Lihat Laporan</a>
             </div>
         </div>
     </div>

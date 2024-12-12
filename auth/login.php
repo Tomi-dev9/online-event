@@ -38,9 +38,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
             // Redirect sesuai role
             if ($user['role'] === 'penyelenggara') {
-                header("Location: dashboard/dashboard.php");
+                header("Location: ../dashboard/dashboard.php");
             } elseif ($user['role'] === 'peserta') {
-                header("Location: peserta/home.php");
+                header("Location: ../peserta/daftar.php");
             }
             exit();
         } else {

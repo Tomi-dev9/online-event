@@ -131,13 +131,7 @@ nav a:hover {
 }
 
 /* Footer */
-.footer {
-    background-color: #5BC0DE;
-    color: white;
-    text-align: center;
-    padding: 1.5rem;
-    margin-top: auto;
-}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
