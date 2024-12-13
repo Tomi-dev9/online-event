@@ -1,68 +1,4 @@
-<?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "absensi_online";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Koneksi gagal: " . $conn->connect_error);
-}
-session_start();
-
-if (isset($_POST['submit'])) {
-    $email = $_POST['email'];
-
-    // Validasi email
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo "<script>
-                alert('Format email tidak valid!');
-                window.location.href = 'forgot-password.php';
-              </script>";
-        exit();
-    }
-
-    // Cek apakah email ada dalam database users
-    $stmt = $conn->prepare("SELECT email FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        // Membuat kode verifikasi yang unik
-        $kodeVerifikasi = rand(100000, 999999);
-
-        // Simpan kode verifikasi ke tabel password_reset
-        $stmt = $conn->prepare("REPLACE INTO password_reset (email, kode_verifikasi, created_at) VALUES (?, ?, NOW())");
-        $stmt->bind_param("si", $email, $kodeVerifikasi);
-        $stmt->execute();
-
-        // Kirim email dengan kode verifikasi
-        $subject = "Reset Password Anda";
-        $message = "Halo,\n\nKami menerima permintaan untuk mereset password Anda. Berikut adalah kode verifikasi Anda: $kodeVerifikasi\n\nKode ini hanya berlaku selama 24 jam.\n\nTerima kasih,\nTim Kami";
-        $headers = "From: no-reply@domain.com";
-
-        if (mail($email, $subject, $message, $headers)) {
-            echo "<script>
-                    alert('Kode verifikasi telah dikirim ke email Anda!');
-                    window.location.href = 'verify_code.php';
-                  </script>";
-        } else {
-            echo "<script>
-                    alert('Gagal mengirim email. Coba lagi.');
-                    window.location.href = 'forgot-password.php';
-                  </script>";
-        }
-    } else {
-        echo "<script>
-                alert('Email tidak ditemukan.');
-                window.location.href = 'forgot-password.php';
-              </script>";
-    }
-}
-?>
-
+<!-- forgot-password.php -->
 <!DOCTYPE html>
 <html lang="id">
 
@@ -88,7 +24,7 @@ if (isset($_POST['submit'])) {
             <p class="text-gray-600 text-sm text-center mb-6">
                 Masukkan email yang terdaftar, kami akan mengirimkan kode verifikasi untuk mereset password Anda.
             </p>
-            <form action="forgot-password.php" method="post" class="space-y-4">
+            <form action="send-code.php" method="post" class="space-y-4">
                 <!-- Email -->
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700">Email</label>

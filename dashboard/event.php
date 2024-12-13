@@ -61,7 +61,7 @@ if (isset($_GET['delete_event'])) {
 }
 
 // Ambil data event untuk ditampilkan
-$result = $conn->query("SELECT * FROM event");
+$result = $conn->query("SELECT * FROM events");
 $events = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 
