@@ -229,7 +229,7 @@ try {
                 <i class="fas fa-bars"></i>
             </button>
             <nav class="navbar">
-                <a href="./peserta/sertifikat.php">Sertifikat</a>
+                <a href="./sertifikat.php">Sertifikat</a>
                 <a class="login" href="./auth/login.php">Log In</a>
             </nav>
         </div>

@@ -9,7 +9,6 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
-
 session_start();
 
 if (isset($_POST['submit'])) {
@@ -19,45 +18,46 @@ if (isset($_POST['submit'])) {
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo "<script>
                 alert('Format email tidak valid!');
-                window.location.href = 'lupa-password.php';
+                window.location.href = 'forgot-password.php';
               </script>";
         exit();
     }
 
-    // Cek apakah email ada dalam database
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
-    $stmt->execute(['email' => $email]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Cek apakah email ada dalam database users
+    $stmt = $conn->prepare("SELECT email FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if ($user) {
-        // Membuat token reset password yang unik
-        $token = bin2hex(random_bytes(50));
+    if ($result->num_rows > 0) {
+        // Membuat kode verifikasi yang unik
+        $kodeVerifikasi = rand(100000, 999999);
 
-        // Simpan token ke database dengan status belum digunakan
-        $stmt = $pdo->prepare("UPDATE users SET reset_token = :token, reset_token_expiry = NOW() + INTERVAL 1 HOUR WHERE email = :email");
-        $stmt->execute(['token' => $token, 'email' => $email]);
+        // Simpan kode verifikasi ke tabel password_reset
+        $stmt = $conn->prepare("REPLACE INTO password_reset (email, kode_verifikasi, created_at) VALUES (?, ?, NOW())");
+        $stmt->bind_param("si", $email, $kodeVerifikasi);
+        $stmt->execute();
 
-        // Kirim email dengan tautan reset password
-        $resetLink = "http://localhost/reset-password.php?token=" . $token; // Ganti dengan URL yang sesuai
+        // Kirim email dengan kode verifikasi
         $subject = "Reset Password Anda";
-        $message = "Klik tautan berikut untuk mereset password Anda: $resetLink";
+        $message = "Halo,\n\nKami menerima permintaan untuk mereset password Anda. Berikut adalah kode verifikasi Anda: $kodeVerifikasi\n\nKode ini hanya berlaku selama 24 jam.\n\nTerima kasih,\nTim Kami";
         $headers = "From: no-reply@domain.com";
 
         if (mail($email, $subject, $message, $headers)) {
             echo "<script>
-                    alert('Tautan reset password telah dikirim ke email Anda!');
-                    window.location.href = 'login.php';
+                    alert('Kode verifikasi telah dikirim ke email Anda!');
+                    window.location.href = 'verify_code.php';
                   </script>";
         } else {
             echo "<script>
                     alert('Gagal mengirim email. Coba lagi.');
-                    window.location.href = 'lupa-password.php';
+                    window.location.href = 'forgot-password.php';
                   </script>";
         }
     } else {
         echo "<script>
                 alert('Email tidak ditemukan.');
-                window.location.href = 'lupa-password.php';
+                window.location.href = 'forgot-password.php';
               </script>";
     }
 }
@@ -86,9 +86,9 @@ if (isset($_POST['submit'])) {
         <div class="bg-white shadow-md rounded-lg p-6">
             <h1 class="text-2xl font-semibold text-center mb-6">Lupa Password</h1>
             <p class="text-gray-600 text-sm text-center mb-6">
-                Masukkan email yang terdaftar, kami akan mengirimkan tautan untuk mereset password Anda.
+                Masukkan email yang terdaftar, kami akan mengirimkan kode verifikasi untuk mereset password Anda.
             </p>
-            <form action="lupa-password.php" method="post" class="space-y-4">
+            <form action="forgot-password.php" method="post" class="space-y-4">
                 <!-- Email -->
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
@@ -96,7 +96,7 @@ if (isset($_POST['submit'])) {
                 </div>
                 <!-- Submit Button -->
                 <button type="submit" name="submit" class="w-full bg-blue-500 text-white p-3 rounded-lg font-semibold hover:bg-blue-600">
-                    Kirim Tautan Reset Password
+                    Kirim Kode Verifikasi
                 </button>
             </form>
             <!-- Back to Login -->

@@ -8,40 +8,67 @@ use PHPMailer\PHPMailer\Exception;
 //Load Composer's autoloader
 require 'vendor/autoload.php';
 
-//Create an instance; passing `true` enables exceptions
-$mail = new PHPMailer(true);
+//Database connection
+$host = 'localhost';
+$db = 'absensi_online';
+$user = 'root';
+$pass = '';
 
 try {
-    //Server settings
-    $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
-    $mail->isSMTP();                                            //Send using SMTP
-    $mail->Host       = 'smtp@gmail.com';                     //Set the SMTP server to send through
-    $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-    $mail->Username   = 'linggtomii@gmail.com';                     //SMTP username
-    $mail->Password   = 'secret';                               //SMTP password
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
-    $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+    $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    //Recipients
-    $mail->setFrom('from@example.com', 'Mailer');
-    $mail->addAddress('joe@example.net', 'Joe User');     //Add a recipient
-    $mail->addAddress('ellen@example.com');               //Name is optional
-    $mail->addReplyTo('info@example.com', 'Information');
-    $mail->addCC('cc@example.com');
-    $mail->addBCC('bcc@example.com');
+    // Email user (replace with actual email address from your logic)
+    $email = 'user@example.com';
 
-    //Attachments
-    $mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
-    $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    //Optional name
+    // Query to get the verification code from the database
+    $stmt = $pdo->prepare("SELECT kode_verifikasi FROM password_reset WHERE email = :email ORDER BY created_at DESC LIMIT 1");
+    $stmt->execute(['email' => $email]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    //Content
-    $mail->isHTML(true);                                  //Set email format to HTML
-    $mail->Subject = 'Here is the subject';
-    $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
-    $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+    if ($result) {
+        $kodeVerifikasi = $result['kode_verifikasi'];
 
-    $mail->send();
-    echo 'Message has been sent';
-} catch (Exception $e) {
-    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        //Create an instance; passing `true` enables exceptions
+        $mail = new PHPMailer(true);
+
+        try {
+            //Server settings
+            $mail->SMTPDebug = SMTP::DEBUG_OFF;                      //Nonaktifkan debug output untuk produksi
+            $mail->isSMTP();                                         //Kirim menggunakan SMTP
+            $mail->Host       = 'smtp.gmail.com';                    //Server SMTP
+            $mail->SMTPAuth   = true;                                //Aktifkan autentikasi SMTP
+            $mail->Username   = 'linggtomii@gmail.com';              //SMTP username
+            $mail->Password   = 'szvp hadm bdgy pjoy';               //SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;         //Enkripsi TLS implisit
+            $mail->Port       = 465;                                 //Port TCP untuk TLS implisit
+
+            //Recipients
+            $mail->setFrom('no-reply@example.com', 'Sistem Kami');
+            $mail->addAddress($email, 'Pengguna');                  //Email penerima
+
+            //Content
+            $mail->isHTML(true);                                     //Set format email ke HTML
+            $mail->Subject = 'Permintaan Penggantian Password';
+            $mail->Body    = '<p>Halo,</p>
+                               <p>Kami menerima permintaan untuk mengganti password akun Anda. Jika Anda tidak meminta penggantian ini, abaikan email ini.</p>
+                               <p>Berikut adalah kode verifikasi untuk mengganti password Anda:</p>
+                               <h2 style="text-align: center;">' . htmlspecialchars($kodeVerifikasi) . '</h2>
+                               <p>Harap diingat bahwa kode ini hanya berlaku selama 24 jam.</p>
+                               <p>Terima kasih,</p>
+                               <p>Tim Kami</p>';
+            $mail->AltBody = "Halo,\n\nKami menerima permintaan untuk mengganti password akun Anda. Jika Anda tidak meminta penggantian ini, abaikan email ini.\n\nBerikut adalah kode verifikasi untuk mengganti password Anda:\n$kodeVerifikasi\n\nHarap diingat bahwa kode ini hanya berlaku selama 24 jam.\n\nTerima kasih,\nTim Kami";
+
+            $mail->send();
+            echo 'Email penggantian password berhasil dikirim.';
+        } catch (Exception $e) {
+            echo "Email tidak dapat dikirim. Kesalahan: {$mail->ErrorInfo}";
+        }
+    } else {
+        echo 'Kode verifikasi tidak ditemukan untuk email ini.';
+    }
+} catch (PDOException $e) {
+    echo 'Koneksi ke database gagal: ' . $e->getMessage();
 }
+
+?>

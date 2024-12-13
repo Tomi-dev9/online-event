@@ -97,7 +97,7 @@ $conn->close();
                 <div>
                     <label for="role" class="block text-sm font-medium text-gray-700">Pilih Role</label>
                     <select id="role" name="role" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none">
-                        <option value="penyelenggara">Penyelenggara/Admin</option>
+                        <option value="penyelenggara">Penyelenggara</option>
                         <option value="peserta">Peserta</option>
                     </select>
                 </div>

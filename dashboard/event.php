@@ -28,7 +28,7 @@ if (isset($_POST['add_event'])) {
     $stmt = $conn->prepare("INSERT INTO event (event_name, event_date, start_time, end_time, quota, image) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssss", $event_name, $event_date, $start_time, $end_time, $quota, $image_name);
     $stmt->execute();
-    header("Location: kelola-event.php");
+    header("Location: event.php");
     exit();
 }
 
