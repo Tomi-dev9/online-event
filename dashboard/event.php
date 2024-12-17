@@ -83,8 +83,7 @@ $events = $result->fetch_all(MYSQLI_ASSOC);
 <body class="bg-gray-100 font-poppins">
     <!-- Navbar -->
     <nav class="bg-blue-500 p-4 flex justify-between items-center">
-        <a href="./dashboard.php" class="text-white font-semibold text-lg">Kembali</a>
-        <a href="#" class="text-white font-semibold">Logout</a>
+        <a href="./dashboard.php" class="text-white font-semibold text-lg">Kembali</a>  
     </nav>
 
     <!-- Container -->

@@ -60,7 +60,7 @@ if (!isset($_SESSION['email'])) {
             <div class="bg-yellow-100 shadow-md rounded-lg p-6 text-center">
                 <h3 class="text-lg font-semibold text-gray-800 mb-2">Laporan Kehadiran</h3>
                 <p class="text-gray-600">Pantau kehadiran peserta secara real-time.</p>
-                <a href="laporan.php" class="mt-4 inline-block bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg font-medium transition">Lihat Laporan</a>
+                <a href="laporan-peserta.php" class="mt-4 inline-block bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg font-medium transition">Lihat Laporan</a>
             </div>
         </div>
     </div>

@@ -61,7 +61,7 @@ if ($conn->connect_error) {
                         while ($row = $result->fetch_assoc()) {
                             echo "<tr class='hover:bg-gray-100 border-b'>";
                             echo "<td class='py-2 px-4 text-center'>" . $no . "</td>";
-                            echo "<td class='py-2 px-4'>" . htmlspecialchars($row['name']) . "</td>";
+                            echo "<td class='py-2 px-4'>" . htmlspecialchars($row['nama']) . "</td>";
                             echo "<td class='py-2 px-4'>" . htmlspecialchars($row['email']) . "</td>";
                             echo "<td class='py-2 px-4'>" . htmlspecialchars($row['username']) . "</td>";
                             echo "<td class='py-2 px-4'>" . htmlspecialchars($row['events'] ?? 'Tidak ada acara') . "</td>";

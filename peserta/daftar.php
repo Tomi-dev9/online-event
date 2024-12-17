@@ -53,7 +53,7 @@ $result = $conn->query($sql);
                 <div class="bg-white p-4 rounded-lg shadow-md">
                     <!-- Menampilkan gambar -->
                     <?php 
-                        $imagePath = !empty($row['image']) ? "img/" . htmlspecialchars($row['image'] ) : ''; 
+                        $imagePath = !empty($row['image']) ? "../dashboard/img/" . htmlspecialchars($row['image'] ) : ''; 
                     ?>
                     <img src="<?php echo $imagePath; ?>" alt="Gambar <?php echo htmlspecialchars($row['event_name']); ?>" class="w-full h-40 object-cover rounded-md mb-4">
                     
