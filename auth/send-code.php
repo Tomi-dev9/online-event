@@ -53,7 +53,7 @@ try {
                 $mail->Port       = 465;                                 //Port TCP untuk TLS implisit
 
                 //Recipients
-                $mail->setFrom('no-reply@example.com', 'Sistem Kami');
+                $mail->setFrom('no-reply@example.com', 'absensi_online');
                 $mail->addAddress($email, 'Pengguna');                  //Email penerima
 
                 //Content

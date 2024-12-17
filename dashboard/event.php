@@ -19,13 +19,16 @@ if (isset($_POST['add_event'])) {
     $quota = $_POST['quota'];
     $image_name = null;
 
-  if (!empty($_FILES['event_image']['name'])) {
+    if (!empty($_FILES['event_image']['name'])) {
         $image_name = time() . '_' . $_FILES['event_image']['name'];
-        $target_dir = "uploads/";
+        $target_dir = "img/";
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0755, true);
+        }
         move_uploaded_file($_FILES['event_image']['tmp_name'], $target_dir . $image_name);
     }
 
-    $stmt = $conn->prepare("INSERT INTO event (event_name, event_date, start_time, end_time, quota, image) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO events (event_name, event_date, start_time, end_time, quota, image) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssss", $event_name, $event_date, $start_time, $end_time, $quota, $image_name);
     $stmt->execute();
     header("Location: event.php");
@@ -40,27 +43,31 @@ if (isset($_POST['edit_event'])) {
     $start_time = $_POST['start_time'];
     $end_time = $_POST['end_time'];
     $quota = $_POST['quota'];
-    $image_name = null;
+    $image_name = $_POST['current_image'];
 
-    $stmt = $conn->prepare("UPDATE event SET event_name = ?, event_date = ?, start_time = ?, end_time = ?, quota = ? WHERE event_id = ?");
-    $stmt->bind_param("ssssii", $event_name, $event_date, $start_time, $end_time, $quota, $event_id);
+    if (!empty($_FILES['event_image']['name'])) {
+        $image_name = time() . '_' . $_FILES['event_image']['name'];
+        move_uploaded_file($_FILES['event_image']['tmp_name'], "img/" . $image_name);
+    }
+
+    $stmt = $conn->prepare("UPDATE events SET event_name = ?, event_date = ?, start_time = ?, end_time = ?, quota = ?, image = ? WHERE event_id = ?");
+    $stmt->bind_param("ssssssi", $event_name, $event_date, $start_time, $end_time, $quota, $image_name, $event_id);
     $stmt->execute();
-    header("Location:event.php");
+    header("Location: event.php");
     exit();
 }
 
 // Hapus Event
 if (isset($_GET['delete_event'])) {
     $event_id = $_GET['delete_event'];
-
-    $stmt = $conn->prepare("DELETE FROM event WHERE event_id = ?");
+    $stmt = $conn->prepare("DELETE FROM events WHERE event_id = ?");
     $stmt->bind_param("i", $event_id);
     $stmt->execute();
-    header("Location:event.php");
+    header("Location: index.php");
     exit();
 }
 
-// Ambil data event untuk ditampilkan
+// Ambil data event
 $result = $conn->query("SELECT * FROM events");
 $events = $result->fetch_all(MYSQLI_ASSOC);
 ?>
@@ -76,15 +83,15 @@ $events = $result->fetch_all(MYSQLI_ASSOC);
 <body class="bg-gray-100 font-poppins">
     <!-- Navbar -->
     <nav class="bg-blue-500 p-4 flex justify-between items-center">
-        <a href="dashboard.php" class="text-white font-semibold text-lg">Dashboard</a>
-        <a href="logout.php" class="text-white font-semibold">Logout</a>
+        <a href="./dashboard.php" class="text-white font-semibold text-lg">Kembali</a>
+        <a href="#" class="text-white font-semibold">Logout</a>
     </nav>
 
     <!-- Container -->
     <div class="container mx-auto mt-10">
         <div class="bg-white shadow-md rounded-lg p-6">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-semibold">Kelola Event</h1>
+                <h1 class="text-2xl font-semibold">Daftar Event</h1>
                 <button onclick="openModal('addModal')" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Tambah Event</button>
             </div>
 
@@ -96,8 +103,7 @@ $events = $result->fetch_all(MYSQLI_ASSOC);
                         <th class="py-2 px-4 border">Nama Event</th>
                         <th class="py-2 px-4 border">Gambar</th>
                         <th class="py-2 px-4 border">Tanggal</th>
-                        <th class="py-2 px-4 border">Waktu Mulai</th>
-                        <th class="py-2 px-4 border">Waktu Selesai</th>
+                        <th class="py-2 px-4 border">Waktu</th>
                         <th class="py-2 px-4 border">Kuota</th>
                         <th class="py-2 px-4 border">Aksi</th>
                     </tr>
@@ -107,13 +113,16 @@ $events = $result->fetch_all(MYSQLI_ASSOC);
                     <tr>
                         <td class="py-2 px-4 border text-center"><?php echo $index + 1; ?></td>
                         <td class="py-2 px-4 border"><?php echo htmlspecialchars($event['event_name']); ?></td>
-                        <td class="py-2 px-4 border"><img src="<?php echo $event['image']; ?>" alt="Event Image" class="w-16 h-16 object-cover"></td>
+                        <td class="py-2 px-4 border text-center">
+                            <?php if ($event['image']): ?>
+                                <img src="img/<?php echo $event['image']; ?>" alt="Gambar Event" class="w-16 h-16 object-cover mx-auto">
+                            <?php endif; ?>
+                        </td>
                         <td class="py-2 px-4 border"><?php echo htmlspecialchars($event['event_date']); ?></td>
-                        <td class="py-2 px-4 border"><?php echo htmlspecialchars($event['start_time']); ?></td>
-                        <td class="py-2 px-4 border"><?php echo htmlspecialchars($event['end_time']); ?></td>
+                        <td class="py-2 px-4 border"><?php echo htmlspecialchars($event['start_time'] . ' - ' . $event['end_time']); ?></td>
                         <td class="py-2 px-4 border text-center"><?php echo htmlspecialchars($event['quota']); ?></td>
                         <td class="py-2 px-4 border text-center">
-                            <button onclick="openEditModal(<?php echo htmlspecialchars(json_encode($event)); ?>)" class="bg-yellow-500 text-white px-2 py-1 rounded">Edit</button>
+                            <button onclick="editEvent(<?php echo htmlspecialchars(json_encode($event)); ?>)" class="bg-yellow-500 text-white px-2 py-1 rounded">Edit</button>
                             <a href="?delete_event=<?php echo $event['event_id']; ?>" onclick="return confirm('Yakin ingin menghapus event ini?')" class="bg-red-500 text-white px-2 py-1 rounded">Hapus</a>
                         </td>
                     </tr>
@@ -127,31 +136,32 @@ $events = $result->fetch_all(MYSQLI_ASSOC);
     <div id="addModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
         <div class="bg-white p-6 rounded-lg w-96">
             <h2 class="text-lg font-semibold mb-4">Tambah Event</h2>
-            <form action="" method="post">
+            <form action="" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="add_event" value="1">
                 <div class="mb-4">
-                <label for="event_image" class="block text-sm font-medium text-gray-700">Gambar Event</label>
-                <input type="file" id="event_image" name="event_image" class="w-full p-2 border rounded" accept="image/*">
+                    <label for="event_name">Nama Event</label>
+                    <input type="text" name="event_name" class="w-full p-2 border rounded" required>
                 </div>
                 <div class="mb-4">
-                    <label for="event_name" class="block text-sm font-medium text-gray-700">Nama Event</label>
-                    <input type="text" id="event_name" name="event_name" class="w-full p-2 border rounded" required>
+                    <label for="event_image">Gambar</label>
+                    <input type="file" name="event_image" class="w-full p-2 border rounded" accept="image/*">
                 </div>
                 <div class="mb-4">
-                    <label for="event_date" class="block text-sm font-medium text-gray-700">Tanggal Event</label>
-                    <input type="date" id="event_date" name="event_date" class="w-full p-2 border rounded" required>
+                    <label for="event_date">Tanggal</label>
+                    <input type="date" name="event_date" class="w-full p-2 border rounded" required>
                 </div>
                 <div class="mb-4">
-                    <label for="start_time" class="block text-sm font-medium text-gray-700">Waktu Mulai</label>
-                    <input type="time" id="start_time" name="start_time" class="w-full p-2 border rounded" required>
+    <label for="start_time">Waktu Mulai</label>
+    <input type="time" name="start_time" class="w-full p-2 border rounded" required>
+</div>
+
+                <div class="mb-4">
+                    <label for="end_time">Waktu Selesai :</label>
+                    <input type="time" name="end_time" class="w-full p-2 border rounded" required>
                 </div>
                 <div class="mb-4">
-                    <label for="end_time" class="block text-sm font-medium text-gray-700">Waktu Selesai</label>
-                    <input type="time" id="end_time" name="end_time" class="w-full p-2 border rounded" required>
-                </div>
-                <div class="mb-4">
-                    <label for="quota" class="block text-sm font-medium text-gray-700">Kuota</label>
-                    <input type="number" id="quota" name="quota" class="w-full p-2 border rounded" required>
+                    <label for="quotq">kuota :</label>
+                    <input type="kuota" name="quota" class="w-full p-2 border rounded" required>
                 </div>
                 <div class="flex justify-end space-x-2">
                     <button type="button" onclick="closeModal('addModal')" class="bg-gray-500 text-white px-4 py-2 rounded">Batal</button>
@@ -161,6 +171,7 @@ $events = $result->fetch_all(MYSQLI_ASSOC);
         </div>
     </div>
 
+    
     <!-- Modal Edit Event -->
     <div id="editModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
         <div class="bg-white p-6 rounded-lg w-96">

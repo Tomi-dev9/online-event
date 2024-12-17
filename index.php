@@ -34,6 +34,7 @@ try {
     <title>SikilatAbsensi</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -229,8 +230,8 @@ try {
                 <i class="fas fa-bars"></i>
             </button>
             <nav class="navbar">
-                <a href="./peserta/sertifikat.php">Sertifikat</a>
-                <a class="login" href="./auth/login.php">Log In</a>
+                
+                <a class="login" href="./auth/login.php">Login</a>
             </nav>
         </div>
     </header>
@@ -240,14 +241,14 @@ try {
         <div class="container">
             <h1>Solusi Absensi untuk Kegiatan Online dan Offline</h1>
             <p>Membantu mencatat kehadiran dan mengelola sertifikat acara Anda dengan mudah.</p>
-            <a href="#event-section" class="btn-primary">Lihat Event</a>
+            <a href="./auth/login.php" class="btn-primary">Lihat Event</a>
         </div>
     </section>
 
     <!-- Event Section -->
     <section id="event-section" class="event-section">
         <div class="container">
-            <h2>Event yang Sedang Berlangsung</h2>
+           
             <div class="event-cards">
                 <?php if (!empty($events)): ?>
                     <?php foreach ($events as $event): ?>
@@ -261,7 +262,7 @@ try {
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <p>Tidak ada event yang sedang berlangsung saat ini.</p>
+                    
                 <?php endif; ?>
             </div>
         </div>

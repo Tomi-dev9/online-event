@@ -64,7 +64,7 @@ $conn->close();
                 Unduh Sertifikat
             </button>
             <a 
-    href="./peserta.php" 
+    href="../index.php" 
     class="w-full bg-blue-500 text-white p-3 rounded-lg font-semibold text-center block hover:bg-blue-600"
 >
     Kembali
