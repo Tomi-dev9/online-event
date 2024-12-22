@@ -14,7 +14,7 @@ session_start();
 $isLoggedIn = isset($_SESSION['email']) && isset($_SESSION['email']); // Periksa apakah pengguna sudah login
 
 // Query untuk mengambil data dari tabel events
-$sql = "SELECT event_id, event_name, event_date, start_time, end_time, quota, image, status FROM events";
+$sql = "SELECT event_id, event_name, event_date, start_time, end_time, image FROM events";  // Fixed the query
 $result = $conn->query($sql);
 ?>
 
@@ -60,8 +60,6 @@ $result = $conn->query($sql);
                     <h3 class="font-semibold text-lg"><?php echo htmlspecialchars($row['event_name']); ?></h3>
                     <p class="text-gray-600">Tanggal: <?php echo htmlspecialchars($row['event_date']); ?></p>
                     <p class="text-gray-600">Waktu: <?php echo htmlspecialchars($row['start_time']) . " - " . htmlspecialchars($row['end_time']); ?></p>
-                    <p class="text-gray-600">Kuota: <?php echo htmlspecialchars($row['quota']); ?></p>
-                    <p class="text-gray-600">Status: <?php echo htmlspecialchars($row['status']); ?></p>
                     
                     <!-- Tombol untuk melakukan absensi -->
                     <a href="./absensi.php?event_id=<?php echo $row['event_id']; ?>" 

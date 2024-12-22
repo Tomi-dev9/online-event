@@ -12,6 +12,8 @@ if ($conn->connect_error) {
 
 session_start(); // Memulai sesi untuk login
 
+$error_message = ""; // Variabel untuk menyimpan pesan error
+
 // Proses login
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
@@ -33,9 +35,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['email'] = $user['email'];
             $_SESSION['user_role'] = $user['role'];
         
-            // Debugging: Cek nilai session
-            var_dump($_SESSION);
-        
             // Redirect sesuai role
             if ($user['role'] === 'penyelenggara') {
                 header("Location: ../dashboard/dashboard.php");
@@ -44,10 +43,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             exit();
         } else {
-            echo "Email atau password salah.";
+            $error_message = "Email atau password salah.";
         }        
     } else {
-        echo "Email tidak ditemukan.";
+        $error_message = "Email tidak ditemukan.";
     }
     $stmt->close();
 }
@@ -72,6 +71,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container mx-auto mt-10 max-w-md">
         <div class="bg-white shadow-md rounded-lg p-6">
             <h1 class="text-2xl font-semibold text-center mb-6">Login</h1>
+
+            <!-- Display Error Message -->
+            <?php if ($error_message): ?>
+                <div class="mb-4 p-4 bg-red-100 text-red-700 border border-red-300 rounded-lg">
+                    <strong>Error!</strong> <?php echo $error_message; ?>
+                </div>
+            <?php endif; ?>
+
             <form action="" method="post" class="space-y-4">
                 <!-- Email -->
                 <div>

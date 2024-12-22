@@ -34,7 +34,8 @@ if (isset($_POST['submit'])) {
 
         // Eksekusi query
         if ($stmt->execute()) {
-            header("Location: login.php");
+            // Menambahkan notifikasi pendaftaran berhasil
+            echo "<script>alert('Pendaftaran berhasil! Silakan login.'); window.location.href = 'login.php';</script>";
             exit();
         } else {
             echo "Error: " . $stmt->error;
@@ -45,7 +46,6 @@ if (isset($_POST['submit'])) {
 }
 $conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="id">

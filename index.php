@@ -1,30 +1,3 @@
-<?php
-// Koneksi Database
-$host = 'localhost';
-$dbname = 'absensi_online';
-$username = 'root';
-$password = '';
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // Debugging kolom dalam tabel event
-    $query = "SHOW COLUMNS FROM events ";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute();
-    $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Mendapatkan event dengan status ongoing
-    $query = "SELECT * FROM events WHERE status = 'ongoing'";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute();
-    $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (Exception $e) {
-    die("Error: " . $e->getMessage());
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,7 +7,6 @@ try {
     <title>SikilatAbsensi</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -230,7 +202,6 @@ try {
                 <i class="fas fa-bars"></i>
             </button>
             <nav class="navbar">
-                
                 <a class="login" href="./auth/login.php">Login</a>
             </nav>
         </div>
@@ -248,7 +219,7 @@ try {
     <!-- Event Section -->
     <section id="event-section" class="event-section">
         <div class="container">
-           
+            <h2></h2>
             <div class="event-cards">
                 <?php if (!empty($events)): ?>
                     <?php foreach ($events as $event): ?>
@@ -257,12 +228,12 @@ try {
                             <div class="card-content">
                                 <h3><?= htmlspecialchars($event['event_name']) ?></h3>
                                 <p><?= htmlspecialchars($event['event_date']) ?></p>
-                                <a href="daftar_event.php?id=<?= $event['id'] ?>" class="btn-secondary">Daftar</a>
+                                <a href="daftar_event.php?id=<?= htmlspecialchars($event['id']) ?>" class="btn-secondary">Daftar</a>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    
+                    <p style="text-align:center;">.</p>
                 <?php endif; ?>
             </div>
         </div>

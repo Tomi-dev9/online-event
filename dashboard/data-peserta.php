@@ -17,6 +17,20 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
+
+// Aksi hapus peserta
+if (isset($_GET['hapus'])) {
+    $id_peserta = $_GET['hapus'];
+    $sql = "DELETE FROM peserta WHERE user_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_peserta);
+    if ($stmt->execute()) {
+        echo "<script>alert('Peserta berhasil dihapus'); window.location.href = 'data-peserta.php';</script>";
+    } else {
+        echo "<script>alert('Terjadi kesalahan saat menghapus peserta');</script>";
+    }
+    $stmt->close();
+}
 ?>
 
 <!DOCTYPE html>
@@ -35,6 +49,11 @@ if ($conn->connect_error) {
             &larr; Kembali
         </a>
 
+        <!-- Tombol Tambah Peserta -->
+        <a href="tambah_peserta.php" class="inline-block mb-4 ml-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
+            Tambah Peserta
+        </a>
+
         <!-- Judul -->
         <h1 class="text-3xl font-bold mb-6 text-center">Data Peserta</h1>
 
@@ -46,14 +65,18 @@ if ($conn->connect_error) {
                         <th class="py-2 px-4">No</th>
                         <th class="py-2 px-4">Nama</th>
                         <th class="py-2 px-4">Email</th>
-                        <th class="py-2 px-4">Username</th>
+                        <th class="py-2 px-4">No_whatsapp</th>
                         <th class="py-2 px-4">Acara yang Diikuti</th>
                         <th class="py-2 px-4">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    $sql = "SELECT * FROM peserta";
+                    $sql = "
+                    SELECT peserta.*, events.event_name 
+                    FROM peserta
+                    INNER JOIN events ON peserta.event_id = events.event_id
+                ";                                  
                     $result = $conn->query($sql);
                     $no = 1;
 
@@ -63,21 +86,17 @@ if ($conn->connect_error) {
                             echo "<td class='py-2 px-4 text-center'>" . $no . "</td>";
                             echo "<td class='py-2 px-4'>" . htmlspecialchars($row['nama']) . "</td>";
                             echo "<td class='py-2 px-4'>" . htmlspecialchars($row['email']) . "</td>";
-                            echo "<td class='py-2 px-4'>" . htmlspecialchars($row['username']) . "</td>";
-                            echo "<td class='py-2 px-4'>" . htmlspecialchars($row['events'] ?? 'Tidak ada acara') . "</td>";
+                            echo "<td class='py-2 px-4'>" . htmlspecialchars($row['phone_number']) . "</td>";
+                            echo "<td class='py-2 px-4'>" . htmlspecialchars($row['event_name']) . "</td>"; // Nama acara dari tabel events
                             echo "<td class='py-2 px-4 text-center'>
-                                    <button onclick=\"buatQR('" . htmlspecialchars($row['username']) . "')\" 
-                                        class='bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded'>
-                                        Buat QR
                                     </button>
-                                    <button onclick=\"kirimSertifikat('" . htmlspecialchars($row['email']) . "')\" 
-                                        class='bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded'>
-                                        Kirim Sertifikat
-                                    </button>
+                                    <a href='?hapus=" . $row['user_id'] . "' class='bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded ml-2'>
+                                        Hapus
+                                    </a>
                                   </td>";
                             echo "</tr>";
                             $no++;
-                        }
+                        }                    
                     } else {
                         echo "<tr><td colspan='6' class='py-4 text-center'>Tidak ada data peserta.</td></tr>";
                     }
@@ -95,10 +114,6 @@ if ($conn->connect_error) {
         $(document).ready(function() {
             $('#pesertaTable').DataTable();
         });
-
-        function buatQR(username) {
-            window.open('buat_qr.php?username=' + encodeURIComponent(username), '_blank');
-        }
 
         function kirimSertifikat(email) {
             fetch('kirim_sertifikat.php', {

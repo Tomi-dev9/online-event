@@ -10,16 +10,13 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
-// Ambil event_id dari URL
-$event_id = isset($_GET['event_id']) ? intval($_GET['event_id']) : 0;
+// Query untuk mendapatkan daftar peserta dari semua acara
+$sql_peserta = "
+SELECT absensi.absensi_id, absensi.event_id, absensi.user_id, absensi.waktu_absensi, absensi.jumlah_kehadiran, absensi.nama, peserta.email, events.event_name
+FROM absensi
+LEFT JOIN peserta ON absensi.user_id = peserta.user_id
+LEFT JOIN events ON absensi.event_id = events.event_id";
 
-// Query untuk mendapatkan nama acara
-$sql_event = "SELECT event_name FROM events WHERE event_id = $event_id";
-$result_event = $conn->query($sql_event);
-$event_name = ($result_event && $result_event->num_rows > 0) ? $result_event->fetch_assoc()['event_name'] : "Acara Tidak Ditemukan";
-
-// Query untuk mendapatkan daftar peserta
-$sql_peserta = "SELECT absensi_id,user_id, waktu_absensi, nama FROM absensi WHERE event_id = $event_id";
 $result_peserta = $conn->query($sql_peserta);
 ?>
 
@@ -28,7 +25,7 @@ $result_peserta = $conn->query($sql_peserta);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Peserta - <?php echo htmlspecialchars($event_name); ?></title>
+    <title>Laporan Peserta</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
@@ -42,7 +39,7 @@ $result_peserta = $conn->query($sql_peserta);
 
 <!-- Main Content -->
 <main class="container mx-auto p-6 bg-white rounded-lg shadow-md mt-6">
-    <h2 class="text-2xl font-semibold mb-4">Daftar Peserta : <?php echo htmlspecialchars($event_name); ?></h2>
+    <h2 class="text-2xl font-semibold mb-4">Daftar Peserta</h2>
 
     <?php if ($result_peserta && $result_peserta->num_rows > 0): ?>
         <table class="w-full table-auto border-collapse border border-gray-300">
@@ -51,7 +48,10 @@ $result_peserta = $conn->query($sql_peserta);
                     <th class="border border-gray-300 px-4 py-2">No</th>
                     <th class="border border-gray-300 px-4 py-2">Nama</th>
                     <th class="border border-gray-300 px-4 py-2">Email</th>
+                    <th class="border border-gray-300 px-4 py-2">Acara</th>
                     <th class="border border-gray-300 px-4 py-2">Waktu Absensi</th>
+                    <th class="border border-gray-300 px-4 py-2">Jumlah Kehadiran</th>
+                    <th class="border border-gray-300 px-4 py-2">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -61,7 +61,13 @@ $result_peserta = $conn->query($sql_peserta);
                         <td class="border border-gray-300 px-4 py-2 text-center"><?php echo $no++; ?></td>
                         <td class="border border-gray-300 px-4 py-2"><?php echo htmlspecialchars($row['nama']); ?></td>
                         <td class="border border-gray-300 px-4 py-2"><?php echo htmlspecialchars($row['email']); ?></td>
-                        <td class="border border-gray-300 px-4 py-2"><?php echo htmlspecialchars($row['waktu_Absensi']); ?></td>
+                        <td class="border border-gray-300 px-4 py-2"><?php echo htmlspecialchars($row['event_name']); ?></td>
+                        <td class="border border-gray-300 px-4 py-2"><?php echo htmlspecialchars($row['waktu_absensi']); ?></td>
+                        <td class="border border-gray-300 px-4 py-2"><?php echo htmlspecialchars($row['jumlah_kehadiran']); ?></td>
+                        <td class="border border-gray-300 px-4 py-2 text-center">
+                            <!-- Tombol Kirim Sertifikat -->
+                            <a href="kirim_sertifikat.php?absensi_id=<?php echo $row['absensi_id']; ?>" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Kirim Sertifikat</a>
+                        </td>
                     </tr>
                 <?php endwhile; ?>
             </tbody>

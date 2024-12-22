@@ -27,10 +27,10 @@ if ($result_event && $result_event->num_rows > 0) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama = $_POST['nama'] ?? '';
     $email = $_POST['email'] ?? '';
-
+    $phone_number = $_POST['phone_number'] ?? '';
     if (!empty($nama) && !empty($email)) {
-        $sql_daftar = "INSERT INTO peserta (event_id, nama, email, waktu_daftar) 
-                       VALUES ($event_id, '$nama', '$email', NOW())";
+        $sql_daftar = "INSERT INTO peserta (event_id, nama, email,phone_number, waktu_daftar) 
+                       VALUES ($event_id, '$nama', '$email','$phone_number', NOW())";
         if ($conn->query($sql_daftar) === TRUE) {
             $success_message = "Pendaftaran berhasil!";
         } else {
@@ -52,9 +52,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="bg-gray-100">
 
-<header class="bg-green-600 text-white p-4">
+<header class="bg-blue-600 text-white p-4">
     <div class="container mx-auto">
         <h1 class="text-2xl font-bold">Pendaftaran Acara: <?php echo htmlspecialchars($event_name); ?></h1>
+    <!-- Tombol Kembali -->
+    <a href="./daftar.php" class="inline-block mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+            &larr; Kembali
+        </a>
+        
     </div>
 </header>
 
@@ -75,10 +80,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="email" name="email" id="email" class="w-full p-2 border rounded" required>
         </div>
         <div class="mb-4">
-            <label for="username" class="block text-gray-700">Username:</label>
-            <input type="text" name="username" id="username" class="w-full p-2 border rounded" required>
+            <label for="phone_number" class="block text-gray-700">Nomor Whatsapp :</label>
+            <input type="number" name="phone_number" id="phone_number" class="w-full p-2 border rounded" required>
         </div>
-        <button type="submit" class="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-500">
+        <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-green-500">
             Daftar Sekarang
         </button>
     </form>
