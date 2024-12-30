@@ -1,3 +1,20 @@
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "absensi_online";
+
+// Membuat koneksi
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Cek koneksi
+if ($conn->connect_error) {
+    die("Koneksi gagal: " . $conn->connect_error);
+}
+
+$sql = "SELECT event_id, event_name, event_date, start_time, end_time, description, image FROM events";
+$result = $conn->query($sql);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,253 +22,78 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SikilatAbsensi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        /* Header */
-        .header {
-            background-color: #007bff;
-            padding: 1rem 0;
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .navbar {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .navbar a {
-            text-decoration: none;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            transition: background-color 0.3s ease-in-out;
-        }
-
-        .navbar a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: white;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(to right, #007bff, #5bc0de);
-            color: white;
-            padding: 5rem 0;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-        }
-
-        .btn-primary {
-            background-color: white;
-            color: #007bff;
-            padding: 0.8rem 2rem;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: all 0.3s ease-in-out;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            color: white;
-        }
-
-        /* Event Section */
-        .event-section {
-            background-color: #f8f9fa;
-            padding: 3rem 0;
-        }
-
-        .event-section h2 {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 2rem;
-            color: #007bff;
-        }
-
-        .event-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .event-card {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .event-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .event-card img {
-            width: 100%;
-            height: auto;
-        }
-
-        .card-content {
-            padding: 1rem;
-        }
-
-        .card-content h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .btn-secondary {
-            display: inline-block;
-            background-color: #007bff;
-            color: white;
-            padding: 0.5rem 1.5rem;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            margin-top: 1rem;
-            transition: background-color 0.3s ease-in-out;
-        }
-
-        .btn-secondary:hover {
-            background-color: #0056b3;
-        }
-
-        /* Responsive Navbar */
-        @media (max-width: 768px) {
-            .menu-toggle {
-                display: block;
-            }
-
-            .navbar {
-                flex-direction: column;
-                display: none;
-                background: #007bff;
-                position: absolute;
-                top: 100%;
-                right: 0;
-                left: 0;
-                padding: 1rem;
-            }
-
-            .navbar.active {
-                display: flex;
-            }
-        }
-
-        .footer {
-            background-color: #007bff;
-            color: white;
-            text-align: center;
-            padding: 1.5rem;
-            margin-top: auto;
-        }
-    </style>
 </head>
-<body>
+<body class="bg-gray-100 font-poppins">
+
     <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="logo">SikilatAbsensi</div>
-            <button class="menu-toggle" aria-label="Toggle navigation">
+    <header class="bg-blue-600 shadow-md py-4">
+        <div class="container mx-auto flex justify-between items-center px-4">
+            <div class="text-xl font-semibold text-white-800">SikilatAbsensi</div>
+            <button class="lg:hidden text-gray-800" aria-label="Toggle navigation" id="menu-toggle">
                 <i class="fas fa-bars"></i>
             </button>
-            <nav class="navbar">
-                <a class="login" href="./auth/login.php">Login</a>
+            <nav class="hidden lg:flex space-x-6">
+                <a class="text-white hover:text-900 hover:text-white transition-600" href="./auth/login.php">Login</a>
             </nav>
         </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Solusi Absensi untuk Kegiatan Online dan Offline</h1>
-            <p>Membantu mencatat kehadiran dan mengelola sertifikat acara Anda dengan mudah.</p>
-            <a href="./auth/login.php" class="btn-primary">Lihat Event</a>
+    <section class="bg-blue-600 text-white py-16">
+        <div class="container mx-auto text-center px-4">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4">Solusi Absensi untuk Kegiatan Online dan Offline</h1>
+            <p class="text-lg sm:text-xl mb-8">Membantu mencatat kehadiran dan mengelola sertifikat acara Anda dengan mudah.</p>
         </div>
     </section>
 
     <!-- Event Section -->
-    <section id="event-section" class="event-section">
-        <div class="container">
-            <h2></h2>
-            <div class="event-cards">
-                <?php if (!empty($events)): ?>
-                    <?php foreach ($events as $event): ?>
-                        <div class="event-card">
-                            <img src="<?= htmlspecialchars($event['image']) ?>" alt="Poster <?= htmlspecialchars($event['event_name']) ?>">
-                            <div class="card-content">
-                                <h3><?= htmlspecialchars($event['event_name']) ?></h3>
-                                <p><?= htmlspecialchars($event['event_date']) ?></p>
-                                <a href="daftar_event.php?id=<?= htmlspecialchars($event['id']) ?>" class="btn-secondary">Daftar</a>
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800 mb-8">Daftar Event</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                <?php if ($result->num_rows > 0): ?>
+                    <?php while ($row = $result->fetch_assoc()): ?>
+                        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                            <?php 
+                                $imagePath = !empty($row['image']) && file_exists("./dashboard/img/" . $row['image']) 
+                                    ? "./dashboard/img/" . htmlspecialchars($row['image']) 
+                                    : 'default.jpg'; 
+                            ?>
+                            <img src="<?php echo $imagePath; ?>" alt="Gambar <?php echo htmlspecialchars($row['event_name']); ?>" class="w-full h-56 object-cover">
+                            <div class="p-6">
+                                <h3 class="text-xl font-semibold text-gray-800"><?php echo htmlspecialchars($row['event_name']); ?></h3>
+                                <p class="text-gray-600 mt-2">Tanggal: <?php echo htmlspecialchars($row['event_date']); ?></p>
+                                <p class="text-gray-600 mt-2">Waktu: <?php echo htmlspecialchars($row['start_time']) . " - " . htmlspecialchars($row['end_time']); ?></p>
+                                <p class="text-gray-600 mt-4">Deskripsi:</p>
+                                <p class="text-gray-700 mt-2"><?php echo nl2br(htmlspecialchars($row['description'])); ?></p>
+                                <a href="./auth/login.php" class="mt-4 inline-block px-6 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition duration-200">Daftar</a>
                             </div>
                         </div>
-                    <?php endforeach; ?>
+                    <?php endwhile; ?>
                 <?php else: ?>
-                    <p style="text-align:center;">.</p>
+                    <p class="text-center text-gray-600 col-span-full">Tidak ada acara yang sedang berlangsung.</p>
                 <?php endif; ?>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2024 SikilatAbsensi. All Rights Reserved.</p>
+    <footer class="bg-gray-800 text-white py-6">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 SikilatAbsensi. All Rights Reserved.</p>
+        </div>
     </footer>
 
+    <!-- Mobile Menu Toggle Script -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const menuToggle = document.querySelector('.menu-toggle');
-            const navbar = document.querySelector('.navbar');
+        const menuToggle = document.getElementById('menu-toggle');
+        const navbar = document.querySelector('nav');
 
-            menuToggle.addEventListener('click', () => {
-                navbar.classList.toggle('active');
-            });
+        menuToggle.addEventListener('click', () => {
+            navbar.classList.toggle('hidden');
         });
     </script>
 </body>

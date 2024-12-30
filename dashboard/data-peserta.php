@@ -20,7 +20,26 @@ if ($conn->connect_error) {
 
 // Aksi hapus peserta
 if (isset($_GET['hapus'])) {
-    $id_peserta = $_GET['hapus'];
+    $id_peserta = $_GET['hapus']; // Ambil id peserta dari parameter URL
+    $id_peserta = (int) $id_peserta; // Sanitasi input
+
+    // Cek apakah ada absensi yang terkait dengan peserta
+    $sql_check = "SELECT * FROM absensi WHERE user_id = ?";
+    $stmt_check = $conn->prepare($sql_check);
+    $stmt_check->bind_param("i", $id_peserta);
+    $stmt_check->execute();
+    $result_check = $stmt_check->get_result();
+
+    // Jika ada absensi yang terkait, hapus terlebih dahulu
+    if ($result_check->num_rows > 0) {
+        $sql_delete_absensi = "DELETE FROM absensi WHERE user_id = ?";
+        $stmt_delete_absensi = $conn->prepare($sql_delete_absensi);
+        $stmt_delete_absensi->bind_param("i", $id_peserta);
+        $stmt_delete_absensi->execute();
+        $stmt_delete_absensi->close();
+    }
+
+    // Hapus peserta
     $sql = "DELETE FROM peserta WHERE user_id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id_peserta);
@@ -65,7 +84,7 @@ if (isset($_GET['hapus'])) {
                         <th class="py-2 px-4">No</th>
                         <th class="py-2 px-4">Nama</th>
                         <th class="py-2 px-4">Email</th>
-                        <th class="py-2 px-4">No_whatsapp</th>
+                        <th class="py-2 px-4">No WhatsApp</th>
                         <th class="py-2 px-4">Acara yang Diikuti</th>
                         <th class="py-2 px-4">Aksi</th>
                     </tr>
@@ -76,7 +95,7 @@ if (isset($_GET['hapus'])) {
                     SELECT peserta.*, events.event_name 
                     FROM peserta
                     INNER JOIN events ON peserta.event_id = events.event_id
-                ";                                  
+                    ";                                  
                     $result = $conn->query($sql);
                     $no = 1;
 
@@ -89,7 +108,6 @@ if (isset($_GET['hapus'])) {
                             echo "<td class='py-2 px-4'>" . htmlspecialchars($row['phone_number']) . "</td>";
                             echo "<td class='py-2 px-4'>" . htmlspecialchars($row['event_name']) . "</td>"; // Nama acara dari tabel events
                             echo "<td class='py-2 px-4 text-center'>
-                                    </button>
                                     <a href='?hapus=" . $row['user_id'] . "' class='bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded ml-2'>
                                         Hapus
                                     </a>
@@ -114,17 +132,6 @@ if (isset($_GET['hapus'])) {
         $(document).ready(function() {
             $('#pesertaTable').DataTable();
         });
-
-        function kirimSertifikat(email) {
-            fetch('kirim_sertifikat.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'email=' + encodeURIComponent(email)
-            })
-            .then(response => response.text())
-            .then(data => alert(data))
-            .catch(error => console.error('Error:', error));
-        }
     </script>
 </body>
 </html>

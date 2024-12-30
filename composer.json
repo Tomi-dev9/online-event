@@ -1,15 +1,19 @@
 {
     "name": "tomi-dev9/online-event",
-    "description": "Deskripsi dari proyek online-event",
+    "description": "Pencatat Kehadiran",
     "require": {
         "phpmailer/phpmailer": "^6.9",
         "chillerlan/php-qrcode": "^5.0",
         "endroid/qr-code": "^6.0",
-        "bacon/bacon-qr-code": "^3.0"
+        "bacon/bacon-qr-code": "^3.0",
+        "guzzlehttp/guzzle": "^7.9"
     },
     "autoload": {
         "psr-4": {
             "Namespace\\": "src/"
         }
+    },
+    "platform": {
+        "php": "8.2.27"
     }
 }
