@@ -7,11 +7,12 @@ if (session_status() === PHP_SESSION_NONE) {
 // Periksa apakah sesi email tersedia
 if (!isset($_SESSION['email'])) {
     // Redirect ke halaman login jika belum login
-    header("Location: /login.php");
+    header("Location: ../auth/login.php");
     exit();
 }
 
 // Jika pengguna sudah login, Anda dapat melanjutkan dengan logika lainnya di sini
+    
 ?>
 
 <!DOCTYPE html>

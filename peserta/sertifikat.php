@@ -10,81 +10,112 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
-if (isset($_POST['submit'])) {
-    $name = trim($_POST['name']);
 
-   
-    $stmt = $conn->prepare("SELECT link_sertifikat FROM peserta WHERE nama = ?");
-    $stmt->bind_param("s", $name);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $linkSertifikat = $row['link_sertifikat'];
-    } else {
-        $error = "Sertifikat tidak ditemukan untuk nama: " . htmlspecialchars($name);
-    }
-
-    $stmt->close();
-}
-
-$conn->close();
 ?>
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unduh Sertifikat</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+    <title>Sertifikat Peserta</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .certificate {
+            width: 700px;
+            height: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .certificate h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .certificate p {
+            font-size: 18px;
+            color: #34495e;
+            line-height: 1.6;
+        }
+
+        .certificate .details {
+            margin-top: 30px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .certificate .details p {
+            margin: 5px 0;
+        }
+
+        .certificate .footer {
+            margin-top: 50px;
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+
+        .certificate .footer .signature {
+            margin-top: 30px;
+            font-size: 18px;
+            font-style: italic;
+        }
+
+        .certificate .footer .date {
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        .certificate .qr-code {
+            margin-top: 30px;
+        }
+
+        .certificate img {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 font-poppins">
-    <!-- Container -->
-    <div class="container mx-auto mt-10 max-w-lg bg-white shadow-md rounded-lg p-6">
-        <h1 class="text-2xl font-semibold text-center mb-4">Terima Kasih Sudah Mengikuti Acara Kami</h1>
-        <p class="text-gray-600 text-center mb-6">Untuk sertifikat Anda, silakan isi email yang terdaftar di bawah ini:</p>
+<body>
+
+    <div class="certificate">
+        <h1>SERTIFIKAT PESERTA</h1>
+        <p>Dengan ini kami menyatakan bahwa</p>
         
-        <!-- Form -->
-        <form method="POST" class="space-y-4">
-            <input 
-                type="email" 
-                name="email" 
-                placeholder="Masukkan email Anda" 
-                required 
-                class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            >
-            <button 
-                type="submit" 
-                name="submit" 
-                class="w-full bg-blue-500 text-white p-3 rounded-lg font-semibold hover:bg-blue-600"
-            >
-                Unduh Sertifikat
-            </button>
-            <a 
-    href="../index.php" 
-    class="w-full bg-blue-500 text-white p-3 rounded-lg font-semibold text-center block hover:bg-blue-600"
->
-    Kembali
-</a>
+        <div class="details">
+            <p><strong>Nama Peserta: <?php echo htmlspecialchars($nama_peserta); ?></strong></p>
+            <p><strong>Telah mengikuti acara:</strong></p>
+            <p><strong><?php echo htmlspecialchars($nama_acara); ?></strong></p>
+            <p><strong>Pada tanggal:</strong> <?php echo htmlspecialchars($tanggal_acara); ?></p>
+        </div>
 
-        </form>
+        <div class="footer">
+            <p>Terima kasih atas partisipasi Anda.</p>
+            <div class="signature">
+                <p>TTD,</p>
+                <p><strong>Nama Penyelenggara</strong></p>
+            </div>
+            <div class="date">
+                <p>Tanggal Sertifikat: <?php echo date("d F Y"); ?></p>
+            </div>
+        </div>
 
-        <!-- PHP Message Handling -->
-        <div class="mt-6">
-            <?php
-            if (!empty($error)) {
-                echo '<p class="text-red-500 text-center font-semibold">' . htmlspecialchars($error) . '</p>';
-            }
-
-            if (!empty($linkSertifikat)) {
-                echo '<p class="text-green-500 text-center font-semibold">Unduh sertifikat Anda di sini: <a href="' . htmlspecialchars($linkSertifikat) . '" target="_blank" class="text-blue-500 hover:underline">[Link Sertifikat]</a></p>';
-            }
-            ?>
+        <div class="qr-code">
+            <p>Scan QR code untuk verifikasi:</p>
+            <img src="path/to/qr-code.png" alt="QR Code">
         </div>
     </div>
+
 </body>
 </html>
-

@@ -28,9 +28,12 @@ if (isset($_POST['submit'])) {
         // Hash password
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
+        // Generate slug dari email
+        $slug = strtolower(str_replace('@', '-', str_replace('.', '-', $email)));
+
         // Query insert ke tabel user
-        $stmt = $conn->prepare("INSERT INTO users (name, username, email, password, role) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $nama, $username, $email, $hashedPassword, $role);
+        $stmt = $conn->prepare("INSERT INTO users (name, username, email, password, role, slug) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssss", $nama, $username, $email, $hashedPassword, $role, $slug);
 
         // Eksekusi query
         if ($stmt->execute()) {

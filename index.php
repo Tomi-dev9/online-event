@@ -28,18 +28,18 @@ $result = $conn->query($sql);
 </head>
 <body class="bg-gray-100 font-poppins">
 
-    <!-- Header -->
-    <header class="bg-blue-600 shadow-md py-4">
-        <div class="container mx-auto flex justify-between items-center px-4">
-            <div class="text-xl font-semibold text-white-800">SikilatAbsensi</div>
-            <button class="lg:hidden text-gray-800" aria-label="Toggle navigation" id="menu-toggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            <nav class="hidden lg:flex space-x-6">
-                <a class="text-white hover:text-900 hover:text-white transition-600" href="./auth/login.php">Login</a>
-            </nav>
-        </div>
-    </header>
+   <!-- Header -->
+<header class="bg-blue-600 shadow-md py-4 sticky top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center px-4">
+        <div class="text-xl font-semibold text-white">SikilatAbsensi</div>
+        <button class="lg:hidden text-gray-800" aria-label="Toggle navigation" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <nav class="hidden lg:flex space-x-6">
+            <a class="text-white hover:text-gray-300 transition-600" href="./auth/login.php">Login</a>
+        </nav>
+    </div>
+</header>
 
     <!-- Hero Section -->
     <section class="bg-blue-600 text-white py-16">
@@ -80,13 +80,64 @@ $result = $conn->query($sql);
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-6">
-        <div class="container mx-auto text-center">
-            <p>&copy; 2024 SikilatAbsensi. All Rights Reserved.</p>
+<!-- Meet Our Team Section -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800 mb-8 text-center">Meet Our Team</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            <!-- Team Member 1 -->
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                <img src="./image/DSCF5322.JPG" alt="Team Member 1" class="w-full h-56 object-cover">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-800">Tomingse Lingga</h3>
+                    <p class="text-gray-600 mt-2">Web Developer</p>
+                </div>
+            </div>
+            <!-- Team Member 2 -->
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                <img src="./image/raihan.JPG" alt="Team Member 2" class="w-full h-56 object-cover">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-800">Muhhammad Raihan Hanafi</h3>
+                    <p class="text-gray-600 mt-2">Web Developer</p>
+                </div>
+            </div>
+            <!-- Team Member 3 -->
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                <img src="./image/farhan.jpg" alt="Team Member 3" class="w-full h-56 object-cover">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-800">Muhhammad Farhan Saz</h3>
+                    <p class="text-gray-600 mt-2">Frontend Developer</p>
+                </div>
+            </div>
+            <!-- Team Member 4 -->
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                <img src="./image/destia.jpg" alt="Team Member 4" class="w-full h-56 object-cover">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-800">Destia</h3>
+                    <p class="text-gray-600 mt-2">UI/UX Designer</p>
+                </div>
+            </div>
+            <!-- Team Member 5 -->
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                <img src="./image/WhatsApp Image 2025-01-05 at 12.45.26_2d169853.jpg" alt="Team Member 5" class="w-full h-56 object-cover">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-800">Rizki Yehezkiel Sigalingging</h3>
+                    <p class="text-gray-600 mt-2">Frontend Developer</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-gray-300 py-12">
+        <div class="container mx-auto px-4">
+            <p class="text-center">&copy; 2025 PBL-106. All rights reserved.</p>
         </div>
     </footer>
 
+    
     <!-- Mobile Menu Toggle Script -->
     <script>
         const menuToggle = document.getElementById('menu-toggle');

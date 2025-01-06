@@ -44,9 +44,13 @@ if (isset($_GET['hapus'])) {
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id_peserta);
     if ($stmt->execute()) {
-        echo "<script>alert('Peserta berhasil dihapus'); window.location.href = 'data-peserta.php';</script>";
+        // Pengalihan setelah sukses
+        echo "<script>
+                window.location.href = 'data-peserta.php'; // Ganti dengan halaman yang sesuai
+              </script>";
     } else {
-        echo "<script>alert('Terjadi kesalahan saat menghapus peserta');</script>";
+        echo "<script>
+              </script>";
     }
     $stmt->close();
 }
@@ -60,6 +64,7 @@ if (isset($_GET['hapus'])) {
     <title>Data Peserta</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
     <div class="container mx-auto p-6">
@@ -108,9 +113,9 @@ if (isset($_GET['hapus'])) {
                             echo "<td class='py-2 px-4'>" . htmlspecialchars($row['phone_number']) . "</td>";
                             echo "<td class='py-2 px-4'>" . htmlspecialchars($row['event_name']) . "</td>"; // Nama acara dari tabel events
                             echo "<td class='py-2 px-4 text-center'>
-                                    <a href='?hapus=" . $row['user_id'] . "' class='bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded ml-2'>
+                                    <button onclick=\"confirmDelete(" . $row['user_id'] . ")\" class='bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded ml-2'>
                                         Hapus
-                                    </a>
+                                    </button>
                                   </td>";
                             echo "</tr>";
                             $no++;
@@ -133,5 +138,24 @@ if (isset($_GET['hapus'])) {
             $('#pesertaTable').DataTable();
         });
     </script>
+    <script>
+    function confirmDelete(userId) {
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data peserta akan dihapus secara permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '?hapus=' + userId;
+            }
+        });
+    }
+    </script>
+
 </body>
 </html>

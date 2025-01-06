@@ -1,20 +1,22 @@
 <?php
-//Import PHPMailer classes into the global namespace
+// Import PHPMailer classes into the global namespace
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-//Load Composer's autoloader
+// Load Composer's autoloader
 require 'vendor/autoload.php';
 
-//Database connection
-$host = 'localhost';
-$db = 'absensi_online';
-$user = 'root';
-$pass = '';
+session_start(); // Mulai sesi
+
+// Database connection
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "absensi_online";
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Pastikan email datang dari form
@@ -38,26 +40,25 @@ try {
                 exit();
             }
 
-            //Create an instance; passing `true` enables exceptions
+            // Create an instance; passing `true` enables exceptions
             $mail = new PHPMailer(true);
 
             try {
-                //Server settings
-                $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Nonaktifkan debug output untuk produksi
-                $mail->isSMTP();                                         //Kirim menggunakan SMTP
-                $mail->Host       = 'smtp.gmail.com';                    //Server SMTP
-                $mail->SMTPAuth   = true;                                //Aktifkan autentikasi SMTP
-                $mail->Username   = 'tomingselingga2512@gmail.com';              //SMTP username
-                $mail->Password   = 'gxdffjwkukztjbsv';               //SMTP password
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;         //Enkripsi TLS implisit
-                $mail->Port       = 465;                                 //Port TCP untuk TLS implisit
+                // Server settings
+                $mail->isSMTP();
+                $mail->Host       = 'smtp.gmail.com';
+                $mail->SMTPAuth   = true;
+                $mail->Username   = 'tomingselingga2512@gmail.com'; // Ganti dengan email Anda
+                $mail->Password   = 'gxdffjwkukztjbsv';    // Ganti dengan app password
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                $mail->Port       = 465;
 
-                //Recipients
+                // Recipients
                 $mail->setFrom('no-reply@example.com', 'absensi_online');
-                $mail->addAddress($email, 'Pengguna');                  //Email penerima
+                $mail->addAddress($email, 'Pengguna');
 
-                //Content
-                $mail->isHTML(true);                                     //Set format email ke HTML
+                // Content
+                $mail->isHTML(true);
                 $mail->Subject = 'Permintaan Penggantian Password';
                 $mail->Body    = '<p>Halo,</p>
                                    <p>Kami menerima permintaan untuk mengganti password akun Anda. Jika Anda tidak meminta penggantian ini, abaikan email ini.</p>
@@ -69,7 +70,11 @@ try {
                 $mail->AltBody = "Halo,\n\nKami menerima permintaan untuk mengganti password akun Anda. Jika Anda tidak meminta penggantian ini, abaikan email ini.\n\nBerikut adalah kode verifikasi untuk mengganti password Anda:\n$kodeVerifikasi\n\nHarap diingat bahwa kode ini hanya berlaku selama 24 jam.\n\nTerima kasih,\nTim Kami";
 
                 $mail->send();
-                echo 'Email penggantian password berhasil dikirim.';
+
+                // Simpan email ke sesi dan redirect ke halaman masukkan kode
+                $_SESSION['email'] = $email;
+                header("Location: masukkan_kode.php");
+                exit();
             } catch (Exception $e) {
                 echo "Email tidak dapat dikirim. Kesalahan: {$mail->ErrorInfo}";
             }
