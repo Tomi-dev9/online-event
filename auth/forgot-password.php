@@ -1,4 +1,50 @@
-<!-- forgot-password.php -->
+<?php
+// Inisialisasi pesan untuk SweetAlert
+$sweetAlertMessage = '';
+
+// Jika form disubmit
+if (isset($_POST['submit'])) {
+    $email = trim($_POST['email']);
+
+    // Cek apakah email terdaftar di database
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "absensi_online";
+
+    // Koneksi ke database
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    // Cek koneksi
+    if ($conn->connect_error) {
+        die("Koneksi gagal: " . $conn->connect_error);
+    }
+
+    // Query untuk cek email
+    $checkEmailQuery = "SELECT * FROM users WHERE email = ?";
+    $stmt = $conn->prepare($checkEmailQuery);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // Jika email terdaftar, kirim kode verifikasi (simulasi)
+        $verificationCode = rand(100000, 999999);  // Simulasi kode verifikasi
+        // Kirim email dengan kode verifikasi (di sini kita hanya menampilkan pesan sukses)
+        // Gunakan fungsi mail() atau library seperti PHPMailer untuk mengirim email
+
+        // Set pesan sukses
+        $sweetAlertMessage = "Kode verifikasi telah dikirim ke email Anda.";
+    } else {
+        // Jika email tidak terdaftar
+        $sweetAlertMessage = "Email tidak ditemukan. Pastikan email yang Anda masukkan benar.";
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -9,6 +55,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-gray-100 font-poppins">
@@ -41,6 +88,17 @@
             </div>
         </div>
     </div>
+
+    <!-- SweetAlert -->
+    <?php if ($sweetAlertMessage): ?>
+        <script>
+            Swal.fire({
+                icon: '<?php echo $sweetAlertMessage == "Kode verifikasi telah dikirim ke email Anda." ? "success" : "error"; ?>',
+                title: '<?php echo $sweetAlertMessage; ?>',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    <?php endif; ?>
 </body>
 
 </html>

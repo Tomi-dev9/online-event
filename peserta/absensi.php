@@ -54,18 +54,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 // Catat absensi
                 $waktu_absensi = date('Y-m-d H:i:s');
-                $jumlah_kehadiran = 1;
+                
 
-                $sql_absen = "INSERT INTO absensi (event_id, user_id, waktu_absensi, jumlah_kehadiran, nama) 
-                              VALUES (?, ?, ?, ?, ?)";
-                $stmt_insert = $conn->prepare($sql_absen);
-                $stmt_insert->bind_param("iisis", $event_id, $user_id, $waktu_absensi, $jumlah_kehadiran, $nama);
+                $sql_absen = "INSERT INTO absensi (event_id, user_id, waktu_absensi, nama) 
+              VALUES (?, ?, ?, ?)";
+$stmt_insert = $conn->prepare($sql_absen);
+$stmt_insert->bind_param("iiss", $event_id, $user_id, $waktu_absensi, $nama);
 
-                if ($stmt_insert->execute()) {
-                    $success_message = "Absensi berhasil dicatat untuk $nama!";
-                } else {
-                    $error_message = "Error saat mencatat absensi: " . $conn->error;
-                }
+if ($stmt_insert->execute()) {
+    $success_message = "Absensi berhasil dicatat untuk $nama!";
+} else {
+    $error_message = "Error saat mencatat absensi: " . $conn->error;
+}
             }
         } else {
             $error_message = "Email tidak terdaftar di acara ini. Silakan daftar terlebih dahulu.";

@@ -12,6 +12,10 @@ if ($conn->connect_error) {
     die("Koneksi gagal: " . $conn->connect_error);
 }
 
+// Inisialisasi variabel untuk pesan SweetAlert
+$sweetAlertMessage = '';
+$redirectUrl = '';
+
 // Jika form disubmit
 if (isset($_POST['submit'])) {
     $nama = trim($_POST['nama']);
@@ -23,28 +27,38 @@ if (isset($_POST['submit'])) {
 
     // Validasi input
     if ($password !== $confirmPassword) {
-        echo "Password dan konfirmasi password tidak cocok!";
+        $sweetAlertMessage = "Password dan Konfirmasi Password Tidak Cocok!";
     } else {
-        // Hash password
-        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+        // Cek apakah email sudah terdaftar
+        $checkEmailQuery = "SELECT * FROM users WHERE email = ?";
+        $stmtCheckEmail = $conn->prepare($checkEmailQuery);
+        $stmtCheckEmail->bind_param("s", $email);
+        $stmtCheckEmail->execute();
+        $result = $stmtCheckEmail->get_result();
 
-        // Generate slug dari email
-        $slug = strtolower(str_replace('@', '-', str_replace('.', '-', $email)));
-
-        // Query insert ke tabel user
-        $stmt = $conn->prepare("INSERT INTO users (name, username, email, password, role, slug) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssss", $nama, $username, $email, $hashedPassword, $role, $slug);
-
-        // Eksekusi query
-        if ($stmt->execute()) {
-            // Menambahkan notifikasi pendaftaran berhasil
-            echo "<script>alert('Pendaftaran berhasil! Silakan login.'); window.location.href = 'login.php';</script>";
-            exit();
+        if ($result->num_rows > 0) {
+            // Jika email sudah terdaftar
+            $sweetAlertMessage = "Email Sudah Terdaftar! Gunakan email lain untuk mendaftar.";
         } else {
-            echo "Error: " . $stmt->error;
+            // Hash password
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+            // Query insert ke tabel user
+            $stmt = $conn->prepare("INSERT INTO users (name, username, email, password, role) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssss", $nama, $username, $email, $hashedPassword, $role);
+
+            // Eksekusi query
+            if ($stmt->execute()) {
+                $sweetAlertMessage = "Pendaftaran Berhasil! Terima kasih telah mendaftar. Silakan login.";
+                $redirectUrl = './login.php';
+            } else {
+                $sweetAlertMessage = "Error: " . $stmt->error;
+            }
+
+            $stmt->close();
         }
 
-        $stmt->close();
+        $stmtCheckEmail->close();
     }
 }
 $conn->close();
@@ -59,6 +73,8 @@ $conn->close();
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="bg-gray-100 font-poppins">
     <!-- Navbar -->
@@ -115,5 +131,19 @@ $conn->close();
             </div>
         </div>
     </div>
+
+    <?php if ($sweetAlertMessage): ?>
+        <script>
+            Swal.fire({
+                icon: '<?php echo $sweetAlertMessage == "Pendaftaran Berhasil! Terima kasih telah mendaftar. Silakan login." ? "success" : "error"; ?>',
+                title: '<?php echo $sweetAlertMessage; ?>',
+                confirmButtonText: 'OK'
+            }).then(function() {
+                <?php if ($redirectUrl): ?>
+                    window.location.href = '<?php echo $redirectUrl; ?>';
+                <?php endif; ?>
+            });
+        </script>
+    <?php endif; ?>
 </body>
 </html>

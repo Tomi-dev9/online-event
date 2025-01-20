@@ -30,7 +30,7 @@ if (isset($_POST['submit'])) {
     $stmt->bind_param("sssi", $nama, $email, $phone_number, $event_id);
     
     if ($stmt->execute()) {
-        echo "<script>alert('Peserta berhasil ditambahkan'); window.location.href = 'data-peserta.php';</script>";
+        echo "<script>alert('Peserta berhasil ditambahkan'); window.location.href = 'dashboard.php';</script>";
     } else {
         echo "<script>alert('Terjadi kesalahan saat menambahkan peserta');</script>";
     }
